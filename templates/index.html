@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Dashboard</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; }
+        .card { border: 1px solid #ccc; padding: 20px; margin: 10px; display: inline-block; width: 200px; border-radius: 10px; box-shadow: 2px 2px 5px #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Server Stats Dashboard</h1>
+    <div id="servers"></div>
+
+    <script>
+        async function fetchStats() {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+            const container = document.getElementById('servers');
+            container.innerHTML = '';
+
+            data.forEach(server => {
+                container.innerHTML += `
+                    <div class="card">
+                        <h3>${server.server}</h3>
+                        <p>CPU: ${server.cpu}%</p>
+                        <p>Memory: ${server.memory}%</p>
+                    </div>
+                `;
+            });
+        }
+
+        setInterval(fetchStats, 3000);
+        fetchStats();
+    </script>
+</body>
+</html>
