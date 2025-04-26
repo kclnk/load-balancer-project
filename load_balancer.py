@@ -1,9 +1,9 @@
 # load_balancer.py
 from flask import Flask, request, redirect, jsonify
-import itertools
+import itertools, os
 import threading
-import time
-import requests
+import time, datetime
+import requests, json
 from collections import defaultdict
 from flask_cors import CORS
 
@@ -42,15 +42,25 @@ def balance():
 
 @app.route('/stats', methods=['GET'])
 def stats():
+    stamps = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
+    stats_file_name = f'servers_data [{stamps}].json'
+    stats_file_path = os.path.join('api/stats/', stats_file_name)
+    print(f"Stats file path: {stats_file_path}")
+
     data = {
         "servers": []
     }
+
     for server in servers:
         data['servers'].append({
             "url": server,
             "status": server_status[server],
             "requests": server_request_count[server]
         })
+
+        with open(stats_file_path, 'w') as json_file:
+            json.dump(data, json_file, indent=4)
+    time.sleep(5)  # generate stats json every 5 seconds
     return jsonify(data)
 
 
