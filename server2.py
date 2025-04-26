@@ -7,6 +7,10 @@ app = Flask(__name__)
 def index():
     return "Hello from Backend 2!"
 
+@app.route('/health')
+def health():
+    return "OK", 200
+
 @app.route('/stats')
 def stats():
     return jsonify({
