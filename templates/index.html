@@ -5,57 +5,65 @@
     <meta charset="UTF-8">
     <title>Servers Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gauge@0.4.2/dist/chartjs-plugin-gauge.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-gauge"></script>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
 </head>
 
 <body>
-
     <h2 style="text-align:center;">Load Balancer Server Status</h2>
     <div id="main-section">
+        <div id="tables-div">
+            <table id="serversTable">
+                <thead>
+                    <tr>
+                        <th>Server URL</th>
+                        <th>Status</th>
+                        <th>Requests Handled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic data will go here -->
+                </tbody>
+            </table>
+        </div>
         <div id="main-stats">
-            <div id="tables-div">
-                <table id="serversTable">
-                    <thead>
-                        <tr>
-                            <th>Server URL</th>
-                            <th>Status</th>
-                            <th>Requests Handled</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Dynamic data will go here -->
-                    </tbody>
-                </table>
+            <div id="graphs">
+                <h3 style="text-align:center;">Health/Requests Graphs</h3>
+                <div id="chartsContainer" style="width: 100%; height: 100%;"></div>
             </div>
+            <div id="other-charts">
+                <div id="charts"
+                    style="display:flex; align-items: center; justify-content: center; padding-bottom: 5rem;">
+                    <div class="chart-container" style="width: 400px; height: 400px;">
+                        <h3 style="text-align:center;">Requests Distribution</h3>
+                        <canvas id="requestPieChart"></canvas>
+                    </div>
+                    
 
-            <!-- Card container -->
-            <div id="hoverCard" class="hover-card" style="display: none;">
-                <h4>Server Details</h4>
-                <p id="cardURL"></p>
-                <p id="cardStatus"></p>
-                <p id="cardRequests"></p>
-                <p id="cardCPU"></p>        <!-- NEW -->
-                <p id="cardRAM"></p>        <!-- NEW -->
-                <p id="cardLatency"></p>    <!-- NEW -->
-                <p id="cardUptime"></p>     <!-- NEW -->
-            </div>
-            <div id="charts" style="display:flex; align-items: center; justify-content: center; padding-bottom: 5rem;">
-                <div class="chart-container" style="width: 400px; height: 400px;">
-                    <h3 style="text-align:center;">Request Distribution</h3>
-                    <canvas id="requestPieChart"></canvas>
                 </div>
             </div>
+
         </div>
 
-        <!-- <div style="width: 100%; height: 500px;">
-            <canvas id="requestsHealthChart"></canvas>
-        </div> -->
-    </div>
-    <div id="chartsContainer">
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+
+
+    <!-- Card container -->
+    <div id="hoverCard" class="hover-card" style="display: none;">
+        <h4>Server Details</h4>
+        <p id="cardURL"></p>
+        <p id="cardStatus"></p>
+        <p id="cardRequests"></p>
+        <p id="cardCPU"></p> <!-- NEW -->
+        <p id="cardRAM"></p> <!-- NEW -->
+        <p id="cardLatency"></p> <!-- NEW -->
+        <p id="cardUptime"></p> <!-- NEW -->
+    </div>
+    
 
 </body>
 

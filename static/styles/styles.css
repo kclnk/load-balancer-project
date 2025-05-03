@@ -21,7 +21,7 @@ table {
     display: block;
     overflow: hidden;
     border-radius: 2rem;
-    width: 60%;
+    width: 100%;
     border: 5px solid black;
 }
 
@@ -86,3 +86,26 @@ th {
 #serversTable td {
     color: #1a1a1a;
 }
+
+#main-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#piechart {
+    display: block;
+    overflow: hidden;
+    border-radius: 2rem;
+    width: 20%;
+}
+
+#graphs {
+    display: block;
+    overflow: hidden;
+    border-radius: 2rem;
+    width: 100%;
+    height: auto;
+    padding-top: 1rem;
+}
+

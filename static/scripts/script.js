@@ -298,5 +298,3 @@ document.querySelectorAll('#serversTable tbody tr').forEach(row => {
         document.getElementById('hoverCard').style.display = 'none';
     });
 });
-
-
