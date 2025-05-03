@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/earlyaccess/lateef.css');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'lateef', 'serif';
+    font-size: 2rem;
     margin: 30px;
     background-color: #f5f5f5;
 }
@@ -47,10 +50,10 @@ th {
 
 .hover-card h4 {
     margin: 0;
-    font-size: 16px;
+    font-size: 1.7rem;
 }
 
 .hover-card p {
     margin: 5px 0;
-    font-size: 14px;
+    font-size: 1.5rem;
 }

@@ -11,66 +11,82 @@ async function fetchStats() {
     updateRequestsHealthGraph(data.servers);
 }
 
-// Function to dynamically populate the table (example)
 function updateTable(serverStats) {
     const tbody = document.querySelector("#serversTable tbody");
     tbody.innerHTML = ""; // Clear previous data
 
     serverStats.forEach(server => {
-        const row = document.createElement('tr');
+        // ===== Main Table Row =====
+        const mainTable_row = document.createElement('tr');
 
-        // Add classes to easily target specific columns
         const urlCell = document.createElement('td');
-        urlCell.textContent = server.url;
         urlCell.className = 'url';
+
+        // Add SVG indicator
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", "12");
+        svg.setAttribute("height", "12");
+        svg.setAttribute("viewBox", "0 0 16 16");
+        svg.style.marginRight = "15px";
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", "8");
+        circle.setAttribute("cy", "8");
+        circle.setAttribute("r", "6");
+        circle.setAttribute("fill", server.status ? "green" : "red");
+
+        svg.appendChild(circle);
+        urlCell.appendChild(svg);
+
+        // Add URL text in a span
+        const urlTextSpan = document.createElement('span');
+        urlTextSpan.textContent = server.url;
+        urlCell.appendChild(urlTextSpan);
 
         const statusCell = document.createElement('td');
         statusCell.textContent = server.status ? "UP" : "DOWN";
-        statusCell.className = 'status';
+        statusCell.className = 'status'; // Added class for status hover
+        statusCell.classList.add(server.status ? 'status-up' : 'status-down');
 
         const requestsCell = document.createElement('td');
         requestsCell.textContent = server.requests;
         requestsCell.className = 'requests';
 
-        row.appendChild(urlCell);
-        row.appendChild(statusCell);
-        row.appendChild(requestsCell);
-        tbody.appendChild(row);
+        mainTable_row.appendChild(urlCell);
+        mainTable_row.appendChild(statusCell);
+        mainTable_row.appendChild(requestsCell);
 
-        
+        tbody.appendChild(mainTable_row);
 
-        // Add hover event listeners after the row has been added
-        row.addEventListener('mouseenter', function () {
-            // Get data for the hovered row
-            const url = this.querySelector('.url').textContent;
-            const status = this.querySelector('.status').textContent;
-            const requests = this.querySelector('.requests').textContent;
+        // ===== Hover Events on Main Table Row =====
+        mainTable_row.addEventListener('mouseenter', function () {
+            const url = this.querySelector('.url')?.textContent;
+            const status = this.querySelector('.status')?.textContent;
+            const requests = this.querySelector('.requests')?.textContent;
 
-            // Set the card's content
-            document.getElementById('cardURL').textContent = `URL: ${url}`;
-            document.getElementById('cardStatus').textContent = `Status: ${status}`;
-            document.getElementById('cardRequests').textContent = `Requests: ${requests}`;
-
-            // Show the card
-            document.getElementById('hoverCard').style.display = 'block';
+            if (url && status && requests) {
+                document.getElementById('cardURL').textContent = `URL: ${url}`;
+                document.getElementById('cardStatus').textContent = `Status: ${status}`;
+                document.getElementById('cardRequests').textContent = `Requests: ${requests}`;
+                document.getElementById('hoverCard').style.display = 'block';
+            }
         });
 
-        row.addEventListener('mouseleave', function () {
-            // Hide the card when mouse leaves the row
+        mainTable_row.addEventListener('mouseleave', function () {
             document.getElementById('hoverCard').style.display = 'none';
         });
     });
 
-    // Make the card follow the mouse
+    // ===== Follow Mouse with Card =====
     document.addEventListener('mousemove', function (e) {
         const card = document.getElementById('hoverCard');
         if (card.style.display === 'block') {
-            // Position the card near the mouse
-            card.style.top = `${e.clientY + 10}px`;  // Offset from mouse position
-            card.style.left = `${e.clientX + 10}px`;  // Offset from mouse position
+            card.style.top = `${e.clientY + 10}px`;
+            card.style.left = `${e.clientX + 10}px`;
         }
     });
 }
+
 
 // Update the pie chart with request distribution data
 function updatePieChart(serverStats) {
@@ -139,12 +155,12 @@ function updateRequestsHealthGraph(serverStats) {
 
             // Create a new chart for the server
             const ctx = canvas.getContext('2d');
-            
+
             // Create gradient for fill
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, 'rgba(255, 99, 133, 0.38)');  // Red with opacity
             gradient.addColorStop(1, 'rgba(255, 99, 132, 0.1)');  // Faded red
-            
+
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {

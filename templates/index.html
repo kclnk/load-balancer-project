@@ -12,28 +12,21 @@
     <h2 style="text-align:center;">Load Balancer Server Status</h2>
     <div id="main-section">
         <div id="main-stats">
-            <table id="stausTable">
-                <thead>
-                    <tr>
-                        <th>ind.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic indicators for eachserver -->
-                </tbody>
-            </table>
-            <table id="serversTable">
-                <thead>
-                    <tr>
-                        <th>Server URL</th>
-                        <th>Status</th>
-                        <th>Requests Handled</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic data will go here -->
-                </tbody>
-            </table>
+            <div id="tables-div">
+                <table id="serversTable">
+                    <thead>
+                        <tr>
+                            <th>Server URL</th>
+                            <th>Status</th>
+                            <th>Requests Handled</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic data will go here -->
+                    </tbody>
+                </table>
+            </div>
+
             <!-- Card container -->
             <div id="hoverCard" class="hover-card" style="display: none;">
                 <h4>Server Details</h4>
