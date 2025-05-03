@@ -16,13 +16,11 @@ function updateTable(serverStats) {
     tbody.innerHTML = ""; // Clear previous data
 
     serverStats.forEach(server => {
-        // ===== Main Table Row =====
         const mainTable_row = document.createElement('tr');
 
         const urlCell = document.createElement('td');
         urlCell.className = 'url';
 
-        // Add SVG indicator
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("width", "12");
         svg.setAttribute("height", "12");
@@ -38,14 +36,13 @@ function updateTable(serverStats) {
         svg.appendChild(circle);
         urlCell.appendChild(svg);
 
-        // Add URL text in a span
         const urlTextSpan = document.createElement('span');
         urlTextSpan.textContent = server.url;
         urlCell.appendChild(urlTextSpan);
 
         const statusCell = document.createElement('td');
         statusCell.textContent = server.status ? "UP" : "DOWN";
-        statusCell.className = 'status'; // Added class for status hover
+        statusCell.className = 'status';
         statusCell.classList.add(server.status ? 'status-up' : 'status-down');
 
         const requestsCell = document.createElement('td');
@@ -58,7 +55,6 @@ function updateTable(serverStats) {
 
         tbody.appendChild(mainTable_row);
 
-        // ===== Hover Events on Main Table Row =====
         mainTable_row.addEventListener('mouseenter', function () {
             const url = this.querySelector('.url span')?.textContent;
             const status = this.querySelector('.status')?.textContent;
@@ -84,7 +80,6 @@ function updateTable(serverStats) {
         });
     });
 
-    // ===== Follow Mouse with Card =====
     document.addEventListener('mousemove', function (e) {
         const card = document.getElementById('hoverCard');
         if (card.style.display === 'block') {
@@ -94,15 +89,21 @@ function updateTable(serverStats) {
     });
 }
 
-
-// Update the pie chart with request distribution data
 function updatePieChart(serverStats) {
     const labels = serverStats.map(server => server.url);
     const data = serverStats.map(server => server.requests);
 
+    const canvas = document.getElementById('requestPieChart');
+    const ctx = canvas.getContext('2d');
+    const dpi = window.devicePixelRatio || 1;
+
+    canvas.style.width = '400px';
+    canvas.style.height = '400px';
+    canvas.width = 400 * dpi;
+    canvas.height = 400 * dpi;
+    ctx.scale(dpi, dpi);
+
     if (!pieChart) {
-        // Initial chart creation with animation
-        const ctx = document.getElementById('requestPieChart').getContext('2d');
         pieChart = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -115,27 +116,32 @@ function updatePieChart(serverStats) {
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false,
                 animation: {
                     animateRotate: true,
                     animateScale: true
                 },
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff' // white text for legend
+                        }
+                    },
+                    tooltip: {
+                        bodyColor: '#ffffff',
+                        titleColor: '#ffffff'
                     }
                 }
             }
         });
     } else {
-        // Update data without animation
         pieChart.data.labels = labels;
         pieChart.data.datasets[0].data = data;
-        pieChart.update(); // Update chart without animation
+        pieChart.update();
     }
 }
 
-// Initialize the health and requests graph for each server
 function updateRequestsHealthGraph(serverStats) {
     const container = document.querySelector('#chartsContainer');
     if (!container) {
@@ -144,34 +150,27 @@ function updateRequestsHealthGraph(serverStats) {
     }
 
     serverStats.forEach((server, index) => {
-        // Check if we already have a chart for the server
         let chart = chartInstances[index];
 
         if (!chart) {
-            // Create a div for each server's chart
             const serverDiv = document.createElement('div');
-            serverDiv.className = 'server-chart-container'; // Class for styling
+            serverDiv.className = 'server-chart-container';
 
-            // Create a canvas for each server
             const canvas = document.createElement('canvas');
-            canvas.id = `serverChart-${server.url}`; // Unique ID based on server URL
+            canvas.id = `serverChart-${server.url}`;
             serverDiv.appendChild(canvas);
-
-            // Append the server div to the container
             container.appendChild(serverDiv);
 
-            // Create a new chart for the server
             const ctx = canvas.getContext('2d');
 
-            // Create gradient for fill
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(255, 99, 133, 0.38)');  // Red with opacity
-            gradient.addColorStop(1, 'rgba(255, 99, 132, 0.1)');  // Faded red
+            gradient.addColorStop(0, 'rgba(255, 99, 133, 0.38)');
+            gradient.addColorStop(1, 'rgba(255, 99, 132, 0.1)');
 
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: [], // timestamps
+                    labels: [],
                     datasets: [
                         {
                             label: `${server.url} - Requests`,
@@ -190,7 +189,6 @@ function updateRequestsHealthGraph(serverStats) {
                             yAxisID: 'y1',
                             stepped: true,
                             segment: {
-                                // Only fill the area under the curve when value is 1 (server is UP)
                                 backgroundColor: context => {
                                     const value = context.p1.parsed.y;
                                     return value === 1 ? gradient : 'transparent';
@@ -209,49 +207,58 @@ function updateRequestsHealthGraph(serverStats) {
                     stacked: false,
                     scales: {
                         x: {
-                            title: { display: true, text: 'Time' }
+                            title: { display: true, text: 'Time', color: '#ffffff' },
+                            ticks: { color: '#ffffff' }
                         },
                         y: {
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: { display: true, text: 'Requests' }
+                            title: { display: true, text: 'Requests', color: '#ffffff' },
+                            ticks: { color: '#ffffff' }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: { display: true, text: '1 = UP, 0 = DOWN' },
+                            title: { display: true, text: '1 = UP, 0 = DOWN', color: '#ffffff' },
                             grid: { drawOnChartArea: false },
                             min: 0,
-                            max: 1
+                            max: 1,
+                            ticks: { color: '#ffffff' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        },
+                        tooltip: {
+                            bodyColor: '#ffffff',
+                            titleColor: '#ffffff'
                         }
                     }
                 }
             });
 
-            // Store the chart instance in the array
             chartInstances[index] = chart;
         }
 
-        // Update chart data for each server
         const timestamp = new Date().toLocaleTimeString();
-        let totalRequests = server.requests;
-        let overallHealth = server.status ? 1 : 0;
+        const totalRequests = server.requests;
+        const overallHealth = server.status ? 1 : 0;
 
-        // Shift data arrays if too many points
         if (chart.data.labels.length > 30) {
             chart.data.labels.shift();
             chart.data.datasets[0].data.shift();
             chart.data.datasets[1].data.shift();
         }
 
-        // Add new data
         chart.data.labels.push(timestamp);
         chart.data.datasets[0].data.push(totalRequests);
         chart.data.datasets[1].data.push(overallHealth);
 
-        // Update the chart
         chart.update();
     });
 }
@@ -264,37 +271,5 @@ setInterval(fetchStats, 2000);
 
 // Delay script execution until DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
-    fetchStats(); // Initial data fetch
-});
-
-
-// Add hover event listeners to table rows
-document.querySelectorAll('#serversTable tbody tr').forEach(row => {
-    row.addEventListener('mouseenter', function () {
-        // Get data for the hovered row
-        const url = this.querySelector('.url').textContent;
-        const status = this.querySelector('.status').textContent;
-        const requests = this.querySelector('.requests').textContent;
-
-        // Set the card's content
-        document.getElementById('cardURL').textContent = `URL: ${url}`;
-        document.getElementById('cardStatus').textContent = `Status: ${status}`;
-        document.getElementById('cardRequests').textContent = `Requests: ${requests}`;
-
-        // Get the row's position on the screen
-        const rowRect = this.getBoundingClientRect();
-        const card = document.getElementById('hoverCard');
-
-        // Position the card based on the row's position
-        card.style.top = `${rowRect.top + window.scrollY + 20}px`;
-        card.style.left = `${rowRect.left + window.scrollX + 20}px`;
-
-        // Display the card
-        card.style.display = 'block';
-    });
-
-    row.addEventListener('mouseleave', function () {
-        // Hide the card when mouse leaves the row
-        document.getElementById('hoverCard').style.display = 'none';
-    });
+    fetchStats();
 });

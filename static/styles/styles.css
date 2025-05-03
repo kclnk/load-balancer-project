@@ -9,6 +9,21 @@ body {
     margin: 30px;
 }
 
+body * {
+    opacity: 0;
+}
+
+body.hidden-body * {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    cursor: progress;
+}
+
+body.fade-in * {
+    opacity: 1;
+}
+
+
 table {
     width: 100%;
     margin: auto;
@@ -20,7 +35,6 @@ table {
 #tables-div {
     display: block;
     overflow: hidden;
-    border-radius: 2rem;
     width: 100%;
     border: 5px solid black;
 }
@@ -93,12 +107,6 @@ th {
     justify-content: space-between;
 }
 
-#piechart {
-    display: block;
-    overflow: hidden;
-    border-radius: 2rem;
-    width: 20%;
-}
 
 #graphs {
     display: block;
@@ -109,3 +117,35 @@ th {
     padding-top: 1rem;
 }
 
+#main-section {
+    display: flex;
+    flex-direction: column;
+}
+
+#other-charts {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#charts {
+    width: 100%;
+}
+
+.chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 450px;
+    /* Adjust as needed */
+}
+
+
+#requestPieChart {
+
+    width: 400px;
+    /* CSS layout width */
+    height: 400px;
+    /* CSS layout height */
+}
