@@ -7,7 +7,7 @@ start_time = time.time()
 
 @app.route('/')
 def index():
-    return "Hello from Backend 3!"
+    return "Hello from Backend 4!"
 
 @app.route('/health')
 def health():
