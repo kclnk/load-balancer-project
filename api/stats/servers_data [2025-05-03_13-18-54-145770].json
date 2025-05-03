@@ -1,0 +1,19 @@
+{
+    "servers": [
+        {
+            "url": "http://127.0.0.1:5001",
+            "status": true,
+            "requests": 189
+        },
+        {
+            "url": "http://127.0.0.1:5002",
+            "status": false,
+            "requests": 0
+        },
+        {
+            "url": "http://127.0.0.1:5003",
+            "status": true,
+            "requests": 17
+        }
+    ]
+}
