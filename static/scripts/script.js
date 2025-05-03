@@ -60,14 +60,21 @@ function updateTable(serverStats) {
 
         // ===== Hover Events on Main Table Row =====
         mainTable_row.addEventListener('mouseenter', function () {
-            const url = this.querySelector('.url')?.textContent;
+            const url = this.querySelector('.url span')?.textContent;
             const status = this.querySelector('.status')?.textContent;
             const requests = this.querySelector('.requests')?.textContent;
 
-            if (url && status && requests) {
+            const serverData = serverStats.find(s => s.url === url);
+
+            if (url && status && requests && serverData) {
                 document.getElementById('cardURL').textContent = `URL: ${url}`;
                 document.getElementById('cardStatus').textContent = `Status: ${status}`;
                 document.getElementById('cardRequests').textContent = `Requests: ${requests}`;
+                document.getElementById('cardCPU').textContent = `CPU Usage: ${serverData.cpu}%`;
+                document.getElementById('cardRAM').textContent = `RAM Usage: ${serverData.ram} MB`;
+                document.getElementById('cardLatency').textContent = `Latency: ${serverData.latency} ms`;
+                document.getElementById('cardUptime').textContent = `Uptime: ${serverData.up_time}`;
+
                 document.getElementById('hoverCard').style.display = 'block';
             }
         });
@@ -214,7 +221,7 @@ function updateRequestsHealthGraph(serverStats) {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: { display: true, text: 'Health (1 = UP, 0 = DOWN)' },
+                            title: { display: true, text: '1 = UP, 0 = DOWN' },
                             grid: { drawOnChartArea: false },
                             min: 0,
                             max: 1

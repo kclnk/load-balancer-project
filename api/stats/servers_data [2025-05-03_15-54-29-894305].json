@@ -1,0 +1,28 @@
+{
+    "servers": [
+        {
+            "url": "http://127.0.0.1:5001",
+            "status": false,
+            "requests": 0,
+            "cpu": null,
+            "ram": null,
+            "latency": null
+        },
+        {
+            "url": "http://127.0.0.1:5002",
+            "status": true,
+            "requests": 29,
+            "cpu": 16.7,
+            "ram": 11501.96,
+            "latency": 1.0
+        },
+        {
+            "url": "http://127.0.0.1:5003",
+            "status": true,
+            "requests": 29,
+            "cpu": 6.1,
+            "ram": 11498.21,
+            "latency": 2.0
+        }
+    ]
+}

@@ -28,7 +28,7 @@ def health_check():
                 server_status[server] = (response.status_code == 200)
             except requests.exceptions.RequestException:
                 server_status[server] = False
-        time.sleep(5)  # Check every 5 seconds
+        time.sleep(2)  # Check every 5 seconds
 
 @app.route('/', methods=['GET', 'POST'])
 def balance():
@@ -45,22 +45,50 @@ def stats():
     stamps = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
     stats_file_name = f'servers_data [{stamps}].json'
     stats_file_path = os.path.join('api/stats/', stats_file_name)
-    print(f"Stats file path: {stats_file_path}")
 
     data = {
         "servers": []
     }
 
     for server in servers:
+        # Default values in case of failure
+        cpu = ram = latency = up_time = None
+
+        # Measure latency
+        try:
+            start_time = time.time()
+            health_resp = requests.get(f"{server}/health", timeout=1)
+            latency = round((time.time() - start_time) * 1000, 2)  # in ms
+            server_status[server] = (health_resp.status_code == 200)
+        except requests.exceptions.RequestException:
+            server_status[server] = False
+
+        # Get metrics if alive
+        if server_status[server]:
+            try:
+                metrics_resp = requests.get(f"{server}/metrics", timeout=1)
+                if metrics_resp.status_code == 200:
+                    metrics = metrics_resp.json()
+                    cpu = metrics.get("cpu_usage")
+                    ram = metrics.get("ram_usage")
+                    up_time = metrics.get("up_time")
+            except:
+                pass
+
         data['servers'].append({
             "url": server,
             "status": server_status[server],
-            "requests": server_request_count[server]
+            "requests": server_request_count[server],
+            "cpu": cpu,
+            "ram": ram,
+            "latency": latency,
+            "up_time": up_time 
         })
 
-        with open(stats_file_path, 'w') as json_file:
-            json.dump(data, json_file, indent=4)
-    time.sleep(5)  # generate stats json every 5 seconds
+    # Write to JSON
+    with open(stats_file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
+
     return jsonify(data)
 
 
