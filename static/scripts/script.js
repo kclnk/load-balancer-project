@@ -83,16 +83,33 @@ function updateTable(serverStats) {
     document.addEventListener('mousemove', function (e) {
         const card = document.getElementById('hoverCard');
         if (card.style.display === 'block') {
-            card.style.top = `${e.clientY + 10}px`;
-            card.style.left = `${e.clientX + 10}px`;
+            const padding = 10;
+            const cardWidth = card.offsetWidth;
+            const cardHeight = card.offsetHeight;
+            let x = e.clientX + padding;
+            let y = e.clientY + padding;
+    
+            // Prevent overflow right
+            if (x + cardWidth > window.innerWidth) {
+                x = e.clientX - cardWidth - padding;
+            }
+    
+            // Prevent overflow bottom
+            if (y + cardHeight > window.innerHeight) {
+                y = e.clientY - cardHeight - padding;
+            }
+    
+            // Prevent overflow left/top (optional fallback)
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+    
+            card.style.left = `${x}px`;
+            card.style.top = `${y}px`;
         }
-    });
+    });    
 }
 
 function updatePieChart(serverStats) {
-    const labels = serverStats.map(server => server.url);
-    const data = serverStats.map(server => server.requests);
-
     const canvas = document.getElementById('requestPieChart');
     const ctx = canvas.getContext('2d');
     const dpi = window.devicePixelRatio || 1;
@@ -101,7 +118,34 @@ function updatePieChart(serverStats) {
     canvas.style.height = '400px';
     canvas.width = 400 * dpi;
     canvas.height = 400 * dpi;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform before scaling
     ctx.scale(dpi, dpi);
+
+    const labels = [];
+    const data = [];
+    const backgroundColors = [];
+
+    // A predefined color palette
+    const colorPalette = [
+        '#FF5733', '#33FF57', '#3357FF', '#F0FF33', '#FF33F6', '#33F6FF', '#F6FF33',
+        '#FF8533', '#8533FF', '#33FF85', '#FF5733', '#5733FF', '#FF3385', '#F3FF33'
+    ];
+
+    // Hash server URL to an index in the color palette
+    function getColorForServer(url) {
+        let hash = 0;
+        for (let i = 0; i < url.length; i++) {
+            hash = url.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return colorPalette[Math.abs(hash) % colorPalette.length];
+    }
+
+    // Assign colors, data, and labels
+    serverStats.forEach(server => {
+        labels.push(server.url);
+        data.push(server.requests);
+        backgroundColors.push(getColorForServer(server.url)); // consistent color per server
+    });
 
     if (!pieChart) {
         pieChart = new Chart(ctx, {
@@ -111,7 +155,7 @@ function updatePieChart(serverStats) {
                 datasets: [{
                     label: 'Request Distribution',
                     data: data,
-                    backgroundColor: ['#4CAF50', '#2196F3', '#FFC107'],
+                    backgroundColor: backgroundColors,
                     borderWidth: 1
                 }]
             },
@@ -138,6 +182,7 @@ function updatePieChart(serverStats) {
     } else {
         pieChart.data.labels = labels;
         pieChart.data.datasets[0].data = data;
+        pieChart.data.datasets[0].backgroundColor = backgroundColors;
         pieChart.update();
     }
 }
